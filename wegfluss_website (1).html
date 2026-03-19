@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wegfluss – Prozessautomatisierung & Strategiewanderungen</title>
+<meta name="description" content="Wegfluss hilft kleinen Unternehmen dabei, wiederkehrende Prozesse zu automatisieren – und bietet Strategiewanderungen als Coaching-Format in der Natur.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink:       #0f1f3d;
+    --ink-mid:   #1a3460;
+    --ink-light: #2a5298;
+    --sky:       #4a7fd4;
+    --sky-light: #7aa8e8;
+    --mist:      #e8f0fb;
+    --mist-dark: #d4e3f7;
+    --sand:      #f5f3ee;
+    --white:     #fafcff;
+    --text:      #0f1f3d;
+    --text-muted:#5a6a88;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Outfit', sans-serif; background: var(--white); color: var(--text); line-height: 1.7; overflow-x: hidden; }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.1rem 2.5rem;
+    background: rgba(250,252,255,0.93); backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(74,127,212,0.1);
+    transition: box-shadow 0.3s;
+  }
+  nav.scrolled { box-shadow: 0 2px 20px rgba(15,31,61,0.08); }
+  .nav-logo { font-family: 'Lora', serif; font-size: 1.45rem; font-weight: 600; color: var(--ink); text-decoration: none; letter-spacing: -0.02em; }
+  .nav-logo em { font-style: italic; color: var(--sky); }
+  .nav-links { display: flex; align-items: center; gap: 2.25rem; list-style: none; }
+  .nav-links a { font-size: 0.88rem; font-weight: 400; color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--ink); }
+  .nav-cta { background: var(--ink) !important; color: var(--white) !important; padding: 0.55rem 1.35rem; border-radius: 100px; font-weight: 500 !important; transition: background 0.2s, transform 0.2s !important; }
+  .nav-cta:hover { background: var(--ink-mid) !important; transform: translateY(-1px); }
+  .nav-hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 4px; }
+  .nav-hamburger span { display: block; width: 22px; height: 2px; background: var(--ink); border-radius: 2px; transition: all 0.3s; }
+
+  /* BUTTONS */
+  .btn-primary { display: inline-block; background: var(--sky); color: var(--white); padding: 0.85rem 2rem; border-radius: 100px; font-size: 0.95rem; font-weight: 500; text-decoration: none; transition: background 0.2s, transform 0.2s, box-shadow 0.2s; border: none; cursor: pointer; }
+  .btn-primary:hover { background: var(--ink-light); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(74,127,212,0.3); }
+  .btn-ghost { display: inline-block; background: transparent; color: var(--white); padding: 0.85rem 2rem; border-radius: 100px; font-size: 0.95rem; font-weight: 400; text-decoration: none; border: 1px solid rgba(255,255,255,0.28); transition: border-color 0.2s, background 0.2s; }
+  .btn-ghost:hover { border-color: rgba(255,255,255,0.55); background: rgba(255,255,255,0.07); }
+  .btn-outline { display: inline-block; background: transparent; color: var(--sky); padding: 0.8rem 2rem; border-radius: 100px; font-size: 0.95rem; font-weight: 500; text-decoration: none; border: 1.5px solid var(--sky); transition: background 0.2s, color 0.2s; }
+  .btn-outline:hover { background: var(--sky); color: var(--white); }
+
+  /* UTILS */
+  .container { max-width: 1080px; margin: 0 auto; }
+  .section-label { display: inline-block; font-size: 0.72rem; font-weight: 500; letter-spacing: 0.13em; text-transform: uppercase; color: var(--sky); margin-bottom: 0.9rem; }
+  h2 { font-family: 'Lora', serif; font-size: clamp(1.9rem, 4vw, 2.7rem); font-weight: 600; color: var(--ink); line-height: 1.2; letter-spacing: -0.02em; margin-bottom: 0.9rem; }
+  h2 em { font-style: italic; color: var(--sky); }
+  .lead { font-size: 1.02rem; color: var(--text-muted); font-weight: 300; max-width: 500px; line-height: 1.85; margin-bottom: 2.5rem; }
+
+  /* PAGE ROUTING */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ── HERO ── */
+  #hero-auto {
+    min-height: 100vh; background: var(--ink);
+    display: grid; grid-template-columns: 1fr 1fr;
+    padding-top: 5rem; position: relative; overflow: hidden;
+  }
+  .hero-dot-bg { position: absolute; inset: 0; background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.055) 1px, transparent 0); background-size: 32px 32px; }
+  #hero-auto::after { content: ''; position: absolute; right: -100px; top: -100px; width: 560px; height: 560px; border-radius: 50%; background: radial-gradient(circle, rgba(74,127,212,0.2) 0%, transparent 70%); pointer-events: none; }
+  .hero-left { display: flex; flex-direction: column; justify-content: center; padding: 6rem 4rem 6rem 6rem; position: relative; z-index: 2; }
+  .hero-chip { display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(74,127,212,0.15); border: 1px solid rgba(74,127,212,0.3); color: var(--sky-light); font-size: 0.72rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.4rem 1rem; border-radius: 100px; margin-bottom: 2rem; width: fit-content; }
+  .hero-chip::before { content: ''; width: 6px; height: 6px; background: var(--sky); border-radius: 50%; }
+  h1 { font-family: 'Lora', serif; font-size: clamp(2.6rem, 4.5vw, 3.7rem); font-weight: 600; color: #e8f0fb; line-height: 1.15; letter-spacing: -0.025em; margin-bottom: 1.4rem; }
+  h1 em { font-style: italic; color: var(--sky-light); }
+  .hero-sub { font-size: 1.05rem; color: rgba(232,240,251,0.58); font-weight: 300; max-width: 400px; margin-bottom: 2.25rem; line-height: 1.8; }
+  .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .hero-right { display: flex; align-items: center; justify-content: center; padding: 4rem; position: relative; z-index: 2; }
+  .hero-cards { display: flex; flex-direction: column; gap: 1rem; width: 100%; max-width: 400px; }
+  .hero-card { background: rgba(232,240,251,0.05); border: 1px solid rgba(232,240,251,0.1); border-radius: 14px; padding: 1.4rem 1.6rem; transition: transform 0.3s, background 0.3s; }
+  .hero-card:hover { background: rgba(232,240,251,0.09); transform: translateX(-4px); }
+  .hero-card-num { font-size: 0.7rem; font-weight: 500; letter-spacing: 0.1em; color: var(--sky); margin-bottom: 0.5rem; }
+  .hero-card h3 { font-family: 'Lora', serif; font-size: 0.98rem; color: #e8f0fb; margin-bottom: 0.3rem; font-weight: 400; }
+  .hero-card p { font-size: 0.82rem; color: rgba(232,240,251,0.45); font-weight: 300; }
+
+  /* WAS ICH AUTOMATISIERE */
+  #was-ich { background: var(--white); padding: 5.5rem 2rem; }
+  .was-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; margin-top: 2.5rem; max-width: 900px; }
+  .was-card { background: var(--mist); border: 1px solid rgba(74,127,212,0.12); border-radius: 16px; padding: 1.75rem; transition: transform 0.25s, box-shadow 0.25s; }
+  .was-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(74,127,212,0.12); }
+  .was-card-icon { width: 40px; height: 40px; background: var(--ink); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; margin-bottom: 1rem; }
+  .was-card h4 { font-family: 'Lora', serif; font-size: 0.98rem; color: var(--ink); font-weight: 600; margin-bottom: 0.4rem; }
+  .was-card p { font-size: 0.85rem; color: var(--text-muted); font-weight: 300; line-height: 1.6; }
+  .was-more { margin-top: 2rem; font-size: 0.85rem; color: var(--text-muted); font-weight: 300; display: flex; align-items: center; gap: 0.6rem; }
+  .was-more::before { content: ''; display: inline-block; width: 20px; height: 1px; background: var(--sky-light); }
+
+  /* 3 SCHRITTE */
+  #wie { background: var(--sand); padding: 5.5rem 2rem; }
+  .schritte { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-top: 2.5rem; position: relative; }
+  .schritte::before { content: ''; position: absolute; top: 28px; left: calc(16.66% + 1rem); right: calc(16.66% + 1rem); height: 1px; background: linear-gradient(90deg, transparent, var(--sky-light), transparent); pointer-events: none; }
+  .schritt { text-align: center; padding: 0 1rem; }
+  .schritt-num { width: 56px; height: 56px; background: var(--ink); color: var(--white); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Lora', serif; font-size: 1.15rem; font-weight: 600; margin: 0 auto 1.25rem; position: relative; z-index: 1; }
+  .schritt h4 { font-family: 'Lora', serif; font-size: 1.05rem; color: var(--ink); font-weight: 600; margin-bottom: 0.5rem; }
+  .schritt p { font-size: 0.9rem; color: var(--text-muted); font-weight: 300; line-height: 1.7; }
+
+  /* BOOKING */
+  .booking-section { background: var(--ink); padding: 5.5rem 2rem; }
+  .booking-inner { max-width: 800px; margin: 0 auto; text-align: center; }
+  .booking-inner .section-label { color: var(--sky-light); }
+  .booking-inner h2 { color: #e8f0fb; }
+  .booking-inner h2 em { color: var(--sky-light); }
+  .booking-inner .lead { color: rgba(232,240,251,0.55); margin: 0 auto 2.5rem; }
+  .booking-box { background: rgba(232,240,251,0.05); border: 1px solid rgba(232,240,251,0.12); border-radius: 20px; min-height: 360px; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 0.75rem; padding: 3rem; }
+  .booking-box-icon { width: 58px; height: 58px; background: rgba(74,127,212,0.2); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; margin-bottom: 0.5rem; }
+  .booking-box strong { display: block; font-family: 'Lora', serif; font-size: 1.05rem; color: #e8f0fb; font-weight: 400; margin-bottom: 0.3rem; }
+  .booking-box p { font-size: 0.85rem; color: rgba(232,240,251,0.45); max-width: 380px; line-height: 1.65; font-weight: 300; }
+  .booking-box code { display: inline-block; background: rgba(74,127,212,0.15); border: 1px solid rgba(74,127,212,0.25); padding: 0.3rem 0.9rem; border-radius: 6px; font-size: 0.78rem; color: var(--sky-light); font-family: monospace; margin-top: 0.75rem; }
+
+  /* ÜBER MICH */
+  .ueber-section { background: var(--mist); padding: 5rem 2rem; }
+  .ueber-inner { max-width: 700px; margin: 0 auto; }
+  .ueber-inner h2 { margin-bottom: 1.25rem; }
+  .ueber-inner p { font-size: 1rem; color: var(--text-muted); font-weight: 300; line-height: 1.9; margin-bottom: 1.25rem; }
+  .trust-badges { display: flex; flex-wrap: wrap; gap: 0.65rem; margin-top: 1.75rem; }
+  .trust-badge { background: var(--white); border: 1px solid rgba(74,127,212,0.15); border-radius: 100px; padding: 0.4rem 1rem; font-size: 0.78rem; font-weight: 400; color: var(--ink-mid); }
+
+  /* WANDERUNGEN HERO */
+  #wandern-hero { background: var(--ink-mid); padding: 9rem 2rem 5.5rem; text-align: center; position: relative; overflow: hidden; }
+  #wandern-hero::after { content: ''; position: absolute; left: 50%; top: -80px; transform: translateX(-50%); width: 700px; height: 500px; border-radius: 50%; background: radial-gradient(circle, rgba(74,127,212,0.15) 0%, transparent 70%); pointer-events: none; }
+  #wandern-hero h2 { color: #e8f0fb; font-size: clamp(2.1rem, 4.5vw, 3rem); max-width: 680px; margin: 0 auto 1rem; position: relative; z-index: 1; }
+  #wandern-hero h2 em { color: var(--sky-light); }
+  #wandern-hero p { color: rgba(232,240,251,0.58); font-size: 1.05rem; font-weight: 300; max-width: 480px; margin: 0 auto 2rem; position: relative; z-index: 1; }
+
+  /* WANDERUNGEN DETAIL */
+  #wandern-detail { background: var(--white); padding: 5.5rem 2rem; }
+  .wandern-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: start; }
+  .detail-list { list-style: none; margin: 1.5rem 0 2.5rem; display: flex; flex-direction: column; gap: 0.9rem; }
+  .detail-list li { display: flex; gap: 0.9rem; font-size: 0.93rem; color: var(--text-muted); font-weight: 300; line-height: 1.6; }
+  .detail-list li::before { content: ''; flex-shrink: 0; width: 20px; height: 20px; background: var(--mist); border: 1.5px solid var(--sky); border-radius: 50%; margin-top: 2px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2 6l3 3 5-5' stroke='%234a7fd4' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: center; background-size: 12px; }
+  .formate { display: flex; flex-direction: column; gap: 1.25rem; margin-top: 1.5rem; }
+  .format-card { background: var(--mist); border: 1px solid rgba(74,127,212,0.12); border-radius: 14px; padding: 1.4rem 1.6rem; display: flex; gap: 1.25rem; align-items: flex-start; }
+  .format-badge { flex-shrink: 0; background: var(--ink); color: var(--white); border-radius: 10px; padding: 0.35rem 0.75rem; font-size: 0.72rem; font-weight: 500; letter-spacing: 0.04em; white-space: nowrap; }
+  .format-card h4 { font-family: 'Lora', serif; font-size: 0.97rem; color: var(--ink); font-weight: 600; margin-bottom: 0.3rem; }
+  .format-card p { font-size: 0.84rem; color: var(--text-muted); font-weight: 300; line-height: 1.6; }
+
+  /* FOOTER */
+  footer { background: var(--ink); color: rgba(232,240,251,0.5); padding: 3rem 2rem 2rem; }
+  .footer-inner { max-width: 1080px; margin: 0 auto; }
+  .footer-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem; padding-bottom: 2rem; border-bottom: 1px solid rgba(232,240,251,0.07); }
+  .footer-brand p { font-size: 0.83rem; font-weight: 300; max-width: 240px; margin-top: 0.5rem; line-height: 1.65; }
+  .footer-links { display: flex; gap: 4rem; }
+  .footer-links-col h4 { font-size: 0.7rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(232,240,251,0.3); margin-bottom: 0.9rem; }
+  .footer-links-col ul { list-style: none; display: flex; flex-direction: column; gap: 0.55rem; }
+  .footer-links-col a { font-size: 0.85rem; font-weight: 300; color: rgba(232,240,251,0.5); text-decoration: none; transition: color 0.2s; }
+  .footer-links-col a:hover { color: #e8f0fb; }
+  .footer-bottom { display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem; font-weight: 300; }
+  /* Footer logo override – needs light text on dark background */
+  footer .nav-logo { color: #e8f0fb; }
+  footer .nav-logo em { color: var(--sky-light); }
+
+  /* LEGAL PAGES */
+  .legal-page { background: var(--white); padding: 8rem 2rem 5rem; min-height: 100vh; }
+  .legal-inner { max-width: 700px; margin: 0 auto; }
+  .legal-inner h2 { margin-bottom: 2rem; }
+  .legal-inner h3 { font-family: 'Lora', serif; font-size: 1.1rem; font-weight: 600; color: var(--ink); margin: 2rem 0 0.5rem; }
+  .legal-inner p { font-size: 0.95rem; color: var(--text-muted); font-weight: 300; line-height: 1.85; margin-bottom: 0.75rem; }
+  .legal-inner a { color: var(--sky); text-decoration: none; }
+  .legal-inner a:hover { text-decoration: underline; }
+  .legal-back { display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.85rem; color: var(--text-muted); text-decoration: none; margin-bottom: 2.5rem; transition: color 0.2s; }
+  .legal-back:hover { color: var(--ink); }
+
+  /* MOBILE */
+  @media (max-width: 768px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; flex-direction: column; position: absolute; top: 100%; left: 0; right: 0; background: var(--white); padding: 1.5rem; gap: 1.25rem; border-bottom: 1px solid rgba(74,127,212,0.1); box-shadow: 0 8px 24px rgba(15,31,61,0.08); }
+    .nav-links.open { display: flex; }
+    .nav-hamburger { display: flex; }
+    #hero-auto { grid-template-columns: 1fr; }
+    .hero-left { padding: 2.5rem 1.5rem 3rem; }
+    .hero-right { display: none; }
+    .was-grid { grid-template-columns: 1fr; }
+    .schritte { grid-template-columns: 1fr; }
+    .schritte::before { display: none; }
+    .wandern-grid { grid-template-columns: 1fr; gap: 3rem; }
+    .footer-top { flex-direction: column; gap: 2rem; }
+    .footer-links { gap: 2rem; }
+    .footer-bottom { flex-direction: column; gap: 0.5rem; text-align: center; }
+  }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  .fade-up { opacity: 0; animation: fadeUp 0.65s ease forwards; }
+  .fade-up:nth-child(1) { animation-delay: 0.1s; }
+  .fade-up:nth-child(2) { animation-delay: 0.22s; }
+  .fade-up:nth-child(3) { animation-delay: 0.34s; }
+  .fade-up:nth-child(4) { animation-delay: 0.46s; }
+
+  /* PASSWORD OVERLAY */
+  #pw-overlay {
+    position: fixed; inset: 0; z-index: 9999;
+    background: var(--ink);
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column;
+  }
+  #pw-overlay.hidden { display: none; }
+  .pw-box {
+    background: rgba(232,240,251,0.05);
+    border: 1px solid rgba(232,240,251,0.12);
+    border-radius: 20px;
+    padding: 2.5rem 3rem;
+    width: 100%; max-width: 380px;
+    text-align: center;
+  }
+  .pw-logo {
+    font-family: 'Lora', serif; font-size: 1.6rem;
+    font-weight: 600; color: #e8f0fb;
+    letter-spacing: -0.02em; margin-bottom: 0.4rem;
+  }
+  .pw-logo em { font-style: italic; color: var(--sky-light); }
+  .pw-sub {
+    font-size: 0.83rem; color: rgba(232,240,251,0.4);
+    font-weight: 300; margin-bottom: 2rem;
+  }
+  .pw-input {
+    width: 100%; padding: 0.8rem 1.1rem;
+    background: rgba(232,240,251,0.07);
+    border: 1px solid rgba(232,240,251,0.15);
+    border-radius: 10px;
+    color: #e8f0fb; font-size: 1rem;
+    font-family: 'Outfit', sans-serif;
+    outline: none; margin-bottom: 0.85rem;
+    transition: border-color 0.2s;
+    text-align: center; letter-spacing: 0.08em;
+  }
+  .pw-input::placeholder { color: rgba(232,240,251,0.25); letter-spacing: 0; }
+  .pw-input:focus { border-color: var(--sky); }
+  .pw-btn {
+    width: 100%; padding: 0.85rem;
+    background: var(--sky); color: var(--white);
+    border: none; border-radius: 10px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.95rem; font-weight: 500;
+    cursor: pointer; transition: background 0.2s;
+  }
+  .pw-btn:hover { background: var(--ink-light); }
+  .pw-error {
+    font-size: 0.8rem; color: #e07070;
+    margin-top: 0.75rem; min-height: 1.2em;
+    font-weight: 300;
+  }
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    20%,60% { transform: translateX(-6px); }
+    40%,80% { transform: translateX(6px); }
+  }
+  .pw-input.shake { animation: shake 0.4s ease; }
+</style>
+</head>
+<body>
+
+<!-- PASSWORD OVERLAY -->
+<div id="pw-overlay">
+  <div class="pw-box">
+    <div class="pw-logo">Weg<em>fluss</em></div>
+    <p class="pw-sub">Diese Seite ist passwortgeschützt.</p>
+    <input type="password" id="pw-input" class="pw-input" placeholder="Passwort eingeben" onkeydown="if(event.key==='Enter') checkPw()">
+    <button class="pw-btn" onclick="checkPw()">Weiter</button>
+    <p class="pw-error" id="pw-error"></p>
+  </div>
+</div>
+
+<nav id="nav">
+  <a href="#" class="nav-logo" onclick="showPage('auto')">Weg<em>fluss</em></a>
+  <ul class="nav-links" id="nav-links">
+    <li><a href="#" onclick="showPage('auto')">Automatisierung</a></li>
+    <li><a href="#" onclick="showPage('wandern')">Strategiewanderungen</a></li>
+    <li><a href="#" class="nav-cta" onclick="showPage('auto'); setTimeout(()=>scrollTo('booking-auto'),100)">Termin buchen</a></li>
+  </ul>
+  <button class="nav-hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Menü">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+
+<!-- ══ AUTOMATISIERUNG ══ -->
+<div id="page-auto" class="page active">
+
+  <section id="hero-auto">
+    <div class="hero-dot-bg"></div>
+    <div class="hero-left">
+      <div class="hero-chip fade-up">Prozessautomatisierung · München</div>
+      <h1 class="fade-up">Weniger <em>Reibung.</em><br>Mehr Zeit für das,<br>was zählt.</h1>
+      <p class="hero-sub fade-up">Ich automatisiere wiederkehrende Prozesse in kleinen Unternehmen – mit einfachen No-Code-Tools, ohne IT-Abteilung.</p>
+      <div class="hero-btns fade-up">
+        <a href="#" class="btn-primary" onclick="scrollTo('booking-auto')">Kostenloses Erstgespräch buchen</a>
+        <a href="#" class="btn-ghost" onclick="scrollTo('wie')">So funktioniert es</a>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-cards">
+        <div class="hero-card fade-up">
+          <div class="hero-card-num">Beispiel 01</div>
+          <h3>Kundenanfragen automatisch beantworten</h3>
+          <p>Anfragen werden analysiert, kategorisiert und mit passenden Antworten vorbereitet.</p>
+        </div>
+        <div class="hero-card fade-up">
+          <div class="hero-card-num">Beispiel 02</div>
+          <h3>Termine & Bestätigungen</h3>
+          <p>Buchungen, Erinnerungen und Folge-E-Mails laufen ohne manuellen Aufwand.</p>
+        </div>
+        <div class="hero-card fade-up">
+          <div class="hero-card-num">Beispiel 03</div>
+          <h3>Rechnungen & Dokumente</h3>
+          <p>Automatisch erstellt und versendet – sobald ein Auftrag abgeschlossen wird.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="was-ich">
+    <div class="container">
+      <span class="section-label">Auswahl möglicher Leistungen</span>
+      <h2>Was ich <em>automatisieren</em> kann</h2>
+      <p class="lead">Jedes Unternehmen ist anders – diese Beispiele zeigen, womit ich typischerweise anfange. Im Erstgespräch finden wir gemeinsam heraus, was für dich am meisten bringt.</p>
+      <div class="was-grid">
+        <div class="was-card">
+          <div class="was-card-icon">✉️</div>
+          <h4>Kundenanfragen beantworten</h4>
+          <p>Eingehende Anfragen werden automatisch analysiert, kategorisiert und mit passenden Antwort-Entwürfen vorbereitet.</p>
+        </div>
+        <div class="was-card">
+          <div class="was-card-icon">📅</div>
+          <h4>Terminbestätigungen & Erinnerungen</h4>
+          <p>Buchungen lösen automatisch Bestätigungen, Erinnerungen und Folge-Nachrichten aus – ohne manuelles Eingreifen.</p>
+        </div>
+        <div class="was-card">
+          <div class="was-card-icon">🧾</div>
+          <h4>Rechnungen automatisch erstellen</h4>
+          <p>Sobald ein Auftrag abgeschlossen ist, wird die Rechnung erstellt und direkt an den Kunden versendet.</p>
+        </div>
+      </div>
+      <p class="was-more">Und vieles mehr – abhängig von deinen Prozessen und Tools.</p>
+    </div>
+  </section>
+
+  <section id="wie">
+    <div class="container">
+      <span class="section-label">Mein Vorgehen</span>
+      <h2>In <em>3 Schritten</em> zur Lösung</h2>
+      <div class="schritte">
+        <div class="schritt">
+          <div class="schritt-num">1</div>
+          <h4>Analyse</h4>
+          <p>Wir schauen gemeinsam, welche Prozesse in deinem Alltag die meiste Zeit kosten. Kostenloses Erstgespräch, 45 Minuten.</p>
+        </div>
+        <div class="schritt">
+          <div class="schritt-num">2</div>
+          <h4>Aufbau</h4>
+          <p>Ich baue die Automatisierung mit Tools wie n8n oder Make.com – transparent und ohne versteckte Abhängigkeiten.</p>
+        </div>
+        <div class="schritt">
+          <div class="schritt-num">3</div>
+          <h4>Übergabe</h4>
+          <p>Du bekommst alles erklärt und kannst selbst Anpassungen vornehmen. Die Lösung gehört dir.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="booking-section" id="booking-auto">
+    <div class="booking-inner">
+      <span class="section-label">Termin buchen</span>
+      <h2>Kostenloses <em>Erstgespräch</em></h2>
+      <p class="lead">45 Minuten. Wir analysieren gemeinsam deinen größten Zeitfresser – und du weißt danach, ob Automatisierung für dich Sinn macht.</p>
+      <div class="booking-box">
+        <div class="booking-box-icon">📅</div>
+        <strong>Kostenloses Erstgespräch buchen</strong>
+        <p>45 Minuten via Google Meet – wähle direkt einen passenden Termin aus.</p>
+        <a href="https://calendar.app.google/CopoEypoXhqWh6W19" target="_blank" rel="noopener" class="btn-primary" style="margin-top:1rem;">Termin auswählen →</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="ueber-section">
+    <div class="container">
+      <div class="ueber-inner">
+        <span class="section-label">Über mich</span>
+        <h2>Jan-Hendrik <em>Wiemann</em></h2>
+        <p>Ich arbeite seit vielen Jahren in digitalen Unternehmen in leitenden Positionen. Dabei habe ich gelernt: Ein großer Hebel liegt meistens in den Prozessen, die täglich wiederholt werden – und die trotzdem noch per Hand erledigt werden.</p>
+        <p>Genau dort helfe ich kleinen Unternehmen: Ich identifiziere diese Prozesse und automatisiere sie mit einfachen, erschwinglichen No-Code-Tools. Keine IT-Kenntnisse nötig, keine komplizierte Software.</p>
+        <p>Und weil ich glaube, dass die besten Entscheidungen selten am Schreibtisch entstehen, biete ich daneben auch Strategiegespräche in der Natur an – in Bewegung, mit echtem Fokus.</p>
+        <div class="trust-badges">
+          <span class="trust-badge">Langjährige Führungserfahrung</span>
+          <span class="trust-badge">No-Code &amp; KI-Automatisierung</span>
+          <span class="trust-badge">München</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+
+<!-- ══ STRATEGIEWANDERUNGEN ══ -->
+<div id="page-wandern" class="page">
+
+  <section id="wandern-hero">
+    <div class="hero-dot-bg"></div>
+    <span class="section-label" style="color:var(--sky-light); position:relative; z-index:1;">Strategiewanderungen</span>
+    <h2>Strategie entsteht in <em>Bewegung –</em><br>nicht am Schreibtisch.</h2>
+    <p>Coaching-Gespräche auf ausgewählten Routen rund um München. Für Einzelpersonen und kleine Führungsteams.</p>
+    <a href="#" class="btn-primary" style="position:relative; z-index:1;" onclick="scrollTo('booking-wandern')">Wanderung anfragen</a>
+  </section>
+
+  <section id="wandern-detail">
+    <div class="container">
+      <div class="wandern-grid">
+        <div>
+          <span class="section-label">Was dich erwartet</span>
+          <h2>Denken, Gehen, <em>Entscheiden.</em></h2>
+          <ul class="detail-list">
+            <li>Strukturiertes Coaching-Gespräch während der Wanderung</li>
+            <li>Routen von 2–6 Stunden, je nach Anliegen und Fitness</li>
+            <li>Fokus auf strategische Fragen, Konfliktsituationen, Organisationsentwicklung, Entscheidungsfindung und neue Perspektiven</li>
+            <li>Für Einzelpersonen oder kleine Teams</li>
+            <li>Orte: Münchner Umland, Voralpen, Isartal</li>
+          </ul>
+          <a href="#" class="btn-outline" onclick="scrollTo('booking-wandern')">Termin anfragen</a>
+        </div>
+        <div>
+          <span class="section-label">Formate</span>
+          <h2>Das <em>passende Format</em></h2>
+          <div class="formate">
+            <div class="format-card">
+              <span class="format-badge">2–3 Std.</span>
+              <div>
+                <h4>Kurzwanderung</h4>
+                <p>Für ein konkretes Thema oder eine anstehende Entscheidung. Gut als regelmäßiges Format.</p>
+              </div>
+            </div>
+            <div class="format-card">
+              <span class="format-badge">4–5 Std.</span>
+              <div>
+                <h4>Halbtagstour</h4>
+                <p>Für strategische Fragen mit mehr Tiefe. Inklusive Pause mit Ausblick.</p>
+              </div>
+            </div>
+            <div class="format-card">
+              <span class="format-badge">6+ Std.</span>
+              <div>
+                <h4>Ganztagstour</h4>
+                <p>Für Teams oder komplexe Themen. Mit Mittagspause in einer Hütte. Ideal für Jahresplanung oder Teamklausur.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="booking-section" id="booking-wandern">
+    <div class="booking-inner">
+      <span class="section-label">Termin anfragen</span>
+      <h2>Deine <em>Strategiewanderung</em></h2>
+      <p class="lead">Wähle einen Termin für ein kurzes Vorgespräch – 20 Minuten, um Route und Thema abzustimmen.</p>
+      <div class="booking-box">
+        <div class="booking-box-icon">🏔️</div>
+        <strong>Vorgespräch zur Strategiewanderung buchen</strong>
+        <p>20 Minuten via Google Meet – um Route und Thema abzustimmen.</p>
+        <a href="https://calendar.app.google/rmTCy1S36KFZD1xx5" target="_blank" rel="noopener" class="btn-primary" style="margin-top:1rem;">Termin auswählen →</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="ueber-section">
+    <div class="container">
+      <div class="ueber-inner">
+        <span class="section-label">Über mich</span>
+        <h2>Jan-Hendrik <em>Wiemann</em></h2>
+        <p>Ich arbeite seit vielen Jahren in digitalen Unternehmen in leitenden Positionen. Dabei habe ich gelernt: Ein großer Hebel liegt meistens in den Prozessen, die täglich wiederholt werden – und die trotzdem noch per Hand erledigt werden.</p>
+        <p>Und weil ich glaube, dass die besten Entscheidungen selten am Schreibtisch entstehen, biete ich Strategiegespräche in der Natur an. In Bewegung entstehen neue Perspektiven – und damit oft auch die klareren Antworten.</p>
+        <div class="trust-badges">
+          <span class="trust-badge">Langjährige Führungserfahrung</span>
+          <span class="trust-badge">No-Code &amp; KI-Automatisierung</span>
+          <span class="trust-badge">München</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <a href="#" class="nav-logo" onclick="showPage('auto')">Weg<em>fluss</em></a>
+        <p>Prozessautomatisierung und Strategiewanderungen für kleine Unternehmen. München &amp; Umgebung.</p>
+      </div>
+      <div class="footer-links">
+        <div class="footer-links-col">
+          <h4>Leistungen</h4>
+          <ul>
+            <li><a href="#" onclick="showPage('auto')">Prozessautomatisierung</a></li>
+            <li><a href="#" onclick="showPage('wandern')">Strategiewanderungen</a></li>
+          </ul>
+        </div>
+        <div class="footer-links-col">
+          <h4>Mehr</h4>
+          <ul>
+            <li><a href="mailto:info@wegfluss.de">info@wegfluss.de</a></li>
+            <li><a href="#" onclick="showPage('impressum')">Impressum</a></li>
+            <li><a href="#" onclick="showPage('datenschutz')">Datenschutz</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 Wegfluss · Jan-Hendrik Wiemann</span>
+      <span>München 🏔️</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ══ IMPRESSUM ══ -->
+<div id="page-impressum" class="page">
+  <div class="legal-page">
+    <div class="legal-inner">
+      <a href="#" class="legal-back" onclick="showPage('auto')">← Zurück</a>
+      <span class="section-label">Rechtliches</span>
+      <h2>Impressum</h2>
+      <h3>Anbieterkennzeichnung gemäß § 5 DDG</h3>
+      <p>Jan-Hendrik Wiemann<br>Wegfluss<br>Welfenstr. 16a<br>81541 München</p>
+      <h3>Kontakt</h3>
+      <p>E-Mail: <a href="mailto:info@wegfluss.de">info@wegfluss.de</a></p>
+      <h3>Wirtschafts-Identifikationsnummer</h3>
+      <p>W-IdNr.: [hier eintragen – abrufbar über dein ELSTER-Konto oder über das Bundeszentralamt für Steuern]</p>
+      <h3>Hinweis zur Umsatzsteuer</h3>
+      <p>Als Freiberufler gemäß § 19 UStG (Kleinunternehmerregelung) wird keine Umsatzsteuer berechnet und ausgewiesen.</p>
+      <h3>Inhaltlich Verantwortlicher</h3>
+      <p>Jan-Hendrik Wiemann, Welfenstr. 16a, 81541 München</p>
+      <h3>Haftungsausschluss</h3>
+      <p>Die Inhalte dieser Website wurden mit größtmöglicher Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte kann keine Gewähr übernommen werden.</p>
+      <p>Als Diensteanbieter bin ich gemäß § 7 Abs. 1 DDG für eigene Inhalte auf diesen Seiten nach den allgemeinen Gesetzen verantwortlich. Nach §§ 8 bis 10 DDG bin ich jedoch nicht verpflichtet, übermittelte oder gespeicherte fremde Informationen zu überwachen.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══ DATENSCHUTZ ══ -->
+<div id="page-datenschutz" class="page">
+  <div class="legal-page">
+    <div class="legal-inner">
+      <a href="#" class="legal-back" onclick="showPage('auto')">← Zurück</a>
+      <span class="section-label">Rechtliches</span>
+      <h2>Datenschutzerklärung</h2>
+      <h3>1. Verantwortlicher (Art. 13 Abs. 1 lit. a DSGVO)</h3>
+      <p>Jan-Hendrik Wiemann<br>Wegfluss<br>Welfenstr. 16a<br>81541 München<br>E-Mail: <a href="mailto:info@wegfluss.de">info@wegfluss.de</a></p>
+      <h3>2. Allgemeines zur Datenverarbeitung</h3>
+      <p>Personenbezogene Daten werden auf dieser Website nur verarbeitet, soweit dies zur Bereitstellung einer funktionsfähigen Website sowie der angebotenen Inhalte und Leistungen erforderlich ist oder Sie ausdrücklich eingewilligt haben. Rechtsgrundlage ist Art. 6 Abs. 1 lit. b und f DSGVO.</p>
+      <h3>3. Server-Logfiles</h3>
+      <p>Beim Abruf dieser Website werden durch den Hosting-Anbieter automatisch Informationen in Server-Logfiles erfasst: IP-Adresse, Datum und Uhrzeit, aufgerufene Seite, verwendeter Browser und Betriebssystem. Diese Daten sind nicht einer bestimmten Person zuzuordnen und werden nicht mit anderen Datenquellen zusammengeführt. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse am technischen Betrieb). Speicherdauer: bis zu 7 Tage, danach automatische Löschung.</p>
+      <h3>4. Google Fonts</h3>
+      <p>Diese Website bindet Schriftarten über Google Fonts (Google LLC, 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA) ein. Beim Laden der Seite wird eine Verbindung zu Google-Servern hergestellt, dabei kann Ihre IP-Adresse übertragen werden. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO. Weitere Informationen: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">policies.google.com/privacy</a>.</p>
+      <h3>5. Kontaktaufnahme per E-Mail</h3>
+      <p>Wenn Sie uns per E-Mail kontaktieren, werden Ihre Angaben (Name, E-Mail-Adresse, Nachrichteninhalt) zur Bearbeitung der Anfrage und für etwaige Rückfragen gespeichert. Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO (Vertragsanbahnung) bzw. lit. f DSGVO (berechtigtes Interesse). Eine Weitergabe ohne Einwilligung findet nicht statt. Speicherdauer: bis zum Abschluss der Anfrage, bei Vertragsanbahnung bis zu 3 Jahre nach Abschluss des Kontakts.</p>
+      <h3>6. Google Calendar (Terminbuchung)</h3>
+      <p>Für die Online-Terminbuchung wird Google Calendar (Google LLC, 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA) genutzt. Bei der Buchung werden Name, E-Mail-Adresse und gewünschter Termin an Google übermittelt und dort verarbeitet. Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO. Es kann zu einer Datenübertragung in die USA kommen; Google ist nach dem EU-US Data Privacy Framework zertifiziert und hat Standardvertragsklauseln gemäß Art. 46 Abs. 2 DSGVO abgeschlossen. Speicherdauer: bis zur Durchführung des Termins, danach nach gesetzlichen Aufbewahrungsfristen. Weitere Informationen: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">policies.google.com/privacy</a>.</p>
+      <h3>7. Google Meet (Online-Erstgespräche)</h3>
+      <p>Für die Durchführung von kostenlosen Erstgesprächen wird Google Meet (Google LLC, 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA) verwendet. Dabei werden personenbezogene Daten der Gesprächsteilnehmer verarbeitet, insbesondere: Name, E-Mail-Adresse, IP-Adresse, Geräteinformationen sowie Audio- und Videodaten während des Gesprächs. Gesprächsaufzeichnungen finden nicht statt. Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO (Durchführung vorvertraglicher Maßnahmen) sowie Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an der effektiven Gesprächsdurchführung). Es kann zu einer Datenübertragung in die USA kommen; Google ist nach dem EU-US Data Privacy Framework zertifiziert und hat Standardvertragsklauseln gemäß Art. 46 Abs. 2 DSGVO abgeschlossen. Verbindungsdaten werden nach Beendigung des Gesprächs gelöscht. Weitere Informationen: <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">policies.google.com/privacy</a>.</p>
+      <h3>8. Ihre Rechte (Art. 15–21 DSGVO)</h3>
+      <p>Sie haben das Recht auf Auskunft (Art. 15), Berichtigung (Art. 16), Löschung (Art. 17), Einschränkung der Verarbeitung (Art. 18), Datenübertragbarkeit (Art. 20) sowie Widerspruch gegen die Verarbeitung (Art. 21 DSGVO). Wenden Sie sich hierfür an: <a href="mailto:info@wegfluss.de">info@wegfluss.de</a>.</p>
+      <h3>9. Beschwerderecht</h3>
+      <p>Sie haben das Recht, sich bei einer Datenschutzaufsichtsbehörde zu beschweren (Art. 77 DSGVO). Die zuständige Aufsichtsbehörde in Bayern ist das Bayerische Landesamt für Datenschutzaufsicht (BayLDA), Promenade 18, 91522 Ansbach, <a href="https://www.lda.bayern.de" target="_blank" rel="noopener">www.lda.bayern.de</a>.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── PASSWORT ── (hier ändern)
+  const PASSWORT = 'wegfluss2025';
+
+  function checkPw() {
+    const val = document.getElementById('pw-input').value;
+    if (val === PASSWORT) {
+      sessionStorage.setItem('wf_auth', '1');
+      document.getElementById('pw-overlay').classList.add('hidden');
+    } else {
+      const inp = document.getElementById('pw-input');
+      document.getElementById('pw-error').textContent = 'Falsches Passwort – bitte erneut versuchen.';
+      inp.value = '';
+      inp.classList.remove('shake');
+      void inp.offsetWidth;
+      inp.classList.add('shake');
+      inp.focus();
+    }
+  }
+
+  // Bereits authentifiziert in dieser Session?
+  if (sessionStorage.getItem('wf_auth') === '1') {
+    document.getElementById('pw-overlay').classList.add('hidden');
+  }
+
+  function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-' + id).classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    document.getElementById('nav-links').classList.remove('open');
+  }
+  function scrollTo(id) {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  window.addEventListener('scroll', () => {
+    document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 20);
+  });
+  function toggleMenu() {
+    document.getElementById('nav-links').classList.toggle('open');
+  }
+  document.querySelectorAll('a[onclick]').forEach(a => {
+    a.addEventListener('click', e => e.preventDefault());
+  });
+</script>
+</body>
+</html>
